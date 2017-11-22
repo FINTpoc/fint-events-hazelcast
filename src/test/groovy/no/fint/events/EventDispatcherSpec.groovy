@@ -18,7 +18,7 @@ class EventDispatcherSpec extends Specification {
     def "incoming event gets dispatched to event listener"() {
         given:
         def latch = new CountDownLatch(1)
-        eventDispatcher.addListener('rfk.no', { event -> latch.countDown() } as EventListener)
+        eventDispatcher.registerListener('rfk.no', { event -> latch.countDown() } as EventListener)
 
         when:
         Executors.newSingleThreadExecutor().execute(eventDispatcher)

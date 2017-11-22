@@ -1,6 +1,15 @@
 package no.fint.events;
 
-public class QueueType {
-    public static final String UPSTREAM = "no.fint.upstream";
-    public static final String DOWNSTREAM = "no.fint.downstream";
+import lombok.Getter;
+
+public enum QueueType {
+    UPSTREAM("no.fint.upstream"),
+    DOWNSTREAM("no.fint.downstream");
+
+    @Getter
+    private String queueName;
+
+    QueueType(String queueName) {
+        this.queueName = queueName;
+    }
 }
