@@ -1,6 +1,6 @@
 package no.fint.events.annotations;
 
-import no.fint.events.FintEventsConfig;
+import no.fint.events.config.FintEventsConfig;
 import org.springframework.context.annotation.Import;
 
 import java.lang.annotation.ElementType;

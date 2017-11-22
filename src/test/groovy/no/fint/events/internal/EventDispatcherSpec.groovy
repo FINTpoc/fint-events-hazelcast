@@ -1,7 +1,8 @@
-package no.fint.events
+package no.fint.events.internal
 
 import no.fint.event.model.DefaultActions
 import no.fint.event.model.Event
+import no.fint.events.EventListener
 import spock.lang.Specification
 
 import java.util.concurrent.*

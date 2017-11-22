@@ -1,9 +1,10 @@
-package no.fint.events;
+package no.fint.events.internal;
 
 import com.hazelcast.core.HazelcastInstanceNotActiveException;
 import lombok.Synchronized;
 import lombok.extern.slf4j.Slf4j;
 import no.fint.event.model.Event;
+import no.fint.events.EventListener;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -32,10 +33,14 @@ public class EventDispatcher implements Runnable {
         while (!Thread.currentThread().isInterrupted()) {
             try {
                 final Event event = queue.take();
-                log.debug("Event received: {}", event);
+                log.trace("Event received: {}", event);
                 EventListener eventListener = listeners.get(event.getOrgId());
-                executorService.execute(() -> eventListener.accept(event));
-            } catch (HazelcastInstanceNotActiveException |InterruptedException ignore) {
+                if (eventListener == null) {
+                    log.warn("No listener found for orgId: {}", event.getOrgId());
+                } else {
+                    executorService.execute(() -> eventListener.accept(event));
+                }
+            } catch (HazelcastInstanceNotActiveException | InterruptedException ignore) {
                 return;
             }
         }
@@ -43,5 +48,10 @@ public class EventDispatcher implements Runnable {
 
     public boolean send(Event event) {
         return queue.offer(event);
+    }
+
+    @Synchronized
+    public void clearListeners() {
+        listeners.clear();
     }
 }

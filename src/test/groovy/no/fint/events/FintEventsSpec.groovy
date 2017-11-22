@@ -15,6 +15,13 @@ class FintEventsSpec extends Specification {
     @Autowired
     private FintEvents fintEvents
 
+    private Event event
+
+    void setup() {
+        event = new Event('rfk.no', 'test-source', DefaultActions.HEALTH, 'test-client')
+        fintEvents.clearListeners()
+    }
+
     def "initialize fint events"() {
         expect:
         fintEvents != null
@@ -23,7 +30,6 @@ class FintEventsSpec extends Specification {
     def "Register downstream listener and send event"() {
         given:
         def latch = new CountDownLatch(1)
-        def event = new Event('rfk.no', 'test-source', DefaultActions.HEALTH, 'test-client')
 
         when:
         fintEvents.registerDownstreamListener('rfk.no', { e -> latch.countDown() } as EventListener)
@@ -36,7 +42,6 @@ class FintEventsSpec extends Specification {
     def "Register upstream listener and send event"() {
         given:
         def latch = new CountDownLatch(1)
-        def event = new Event('rfk.no', 'test-source', DefaultActions.HEALTH, 'test-client')
 
         when:
         fintEvents.registerUpstreamListener('rfk.no', { e -> latch.countDown() } as EventListener)
@@ -44,5 +49,17 @@ class FintEventsSpec extends Specification {
 
         then:
         latch.await(2, TimeUnit.SECONDS)
+    }
+
+    def "Send health check and receive response"() {
+        given:
+        def expectedEvent = new Event(corrId: event.getCorrId(), orgId: 'rfk.no', source: 'adapter', action: DefaultActions.HEALTH, client: 'adapter')
+
+        when:
+        fintEvents.registerDownstreamListener('rfk.no', { e -> fintEvents.sendUpstream(expectedEvent) } as EventListener)
+        def responseEvent = fintEvents.sendHealthCheck(event)
+
+        then:
+        responseEvent == expectedEvent
     }
 }
