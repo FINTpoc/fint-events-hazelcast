@@ -19,6 +19,7 @@ public class FintEvents {
     private final EventDispatcher downstreamDispatcher;
     private final EventDispatcher upstreamDispatcher;
     private final FintEventsHealth fintEventsHealth;
+	private ExecutorService executorService;
 
 
     public FintEvents(@Qualifier("no.fint.events.downstream") EventDispatcher downstreamDispatcher,
@@ -27,19 +28,21 @@ public class FintEvents {
         this.downstreamDispatcher = downstreamDispatcher;
         this.upstreamDispatcher = upstreamDispatcher;
         this.fintEventsHealth = fintEventsHealth;
-
-        ExecutorService executorService = Executors.newFixedThreadPool(2);
-        executorService.execute(downstreamDispatcher);
-        executorService.execute(upstreamDispatcher);
-        log.info("Started event dispatchers");
+        this.executorService = Executors.newCachedThreadPool();
     }
 
     public void registerUpstreamListener(String orgId, FintEventListener fintEventListener) {
         upstreamDispatcher.registerListener(orgId, fintEventListener);
+        if (!upstreamDispatcher.isRunning()) {
+        	executorService.execute(upstreamDispatcher);
+        }
     }
 
     public void registerDownstreamListener(String orgId, FintEventListener fintEventListener) {
         downstreamDispatcher.registerListener(orgId, fintEventListener);
+        if (!downstreamDispatcher.isRunning()) {
+        	executorService.execute(downstreamDispatcher);
+        }
     }
 
     public boolean sendUpstream(Event event) {
@@ -61,6 +64,7 @@ public class FintEvents {
     }
 
     public void clearListeners() {
+    	log.debug("Clearing listeners...");
         downstreamDispatcher.clearListeners();
         upstreamDispatcher.clearListeners();
     }
