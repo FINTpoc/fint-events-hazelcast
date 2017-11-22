@@ -36,7 +36,7 @@ public class EventDispatcher implements Runnable {
                 log.trace("Event received: {}", event);
                 FintEventListener fintEventListener = listeners.get(event.getOrgId());
                 if (fintEventListener == null) {
-                    log.warn("No listener found for orgId: {}", event.getOrgId());
+                    log.warn("No listener found for orgId: {} on queue: {}", event.getOrgId(), queue);
                 } else {
                     executorService.execute(() -> fintEventListener.accept(event));
                 }
