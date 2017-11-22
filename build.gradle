@@ -1,0 +1,48 @@
+plugins {
+    id 'com.github.ben-manes.versions' version '0.15.0'
+    id 'com.jfrog.bintray' version '1.7.3'
+}
+
+apply plugin: 'java'
+apply plugin: 'groovy'
+apply plugin: 'maven'
+
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/master/version.gradle'
+jar {
+    baseName = 'fint-events-hazelcast'
+    version = createVersion()
+}
+
+sourceCompatibility = 1.8
+
+repositories {
+    mavenLocal()
+    jcenter()
+    maven {
+        url "http://dl.bintray.com/fint/maven"
+    }
+}
+
+apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.14/dependencies.gradle'
+dependencies {
+    compile("org.projectlombok:lombok:${lombokVersion}")
+    compile('com.hazelcast:hazelcast:3.9')
+    compile('no.fint:fint-event-model:2.0.0')
+
+    testCompile('cglib:cglib-nodep:3.2.5')
+    testCompile("org.spockframework:spock-core:${spockSpringVersion}")
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = gradleVersion
+}
+
+test {
+    testLogging {
+        events 'passed', 'skipped', 'failed'
+    }
+}
+
+if (project.hasProperty('bintrayUser') && project.hasProperty('bintrayKey')) {
+    apply from: 'https://raw.githubusercontent.com/FINTlibs/fint-buildscripts/v1.0.14/bintray.gradle'
+}
