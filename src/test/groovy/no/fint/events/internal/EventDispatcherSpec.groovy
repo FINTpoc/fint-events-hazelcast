@@ -2,7 +2,7 @@ package no.fint.events.internal
 
 import no.fint.event.model.DefaultActions
 import no.fint.event.model.Event
-import no.fint.events.EventListener
+import no.fint.events.FintEventListener
 import spock.lang.Specification
 
 import java.util.concurrent.*
@@ -19,7 +19,7 @@ class EventDispatcherSpec extends Specification {
     def "incoming event gets dispatched to event listener"() {
         given:
         def latch = new CountDownLatch(1)
-        eventDispatcher.registerListener('rfk.no', { event -> latch.countDown() } as EventListener)
+        eventDispatcher.registerListener('rfk.no', { event -> latch.countDown() } as FintEventListener)
 
         when:
         Executors.newSingleThreadExecutor().execute(eventDispatcher)

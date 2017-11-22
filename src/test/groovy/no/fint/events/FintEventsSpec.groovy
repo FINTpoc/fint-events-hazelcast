@@ -32,7 +32,7 @@ class FintEventsSpec extends Specification {
         def latch = new CountDownLatch(1)
 
         when:
-        fintEvents.registerDownstreamListener('rfk.no', { e -> latch.countDown() } as EventListener)
+        fintEvents.registerDownstreamListener('rfk.no', { e -> latch.countDown() } as FintEventListener)
         fintEvents.sendDownstream(event)
 
         then:
@@ -44,7 +44,7 @@ class FintEventsSpec extends Specification {
         def latch = new CountDownLatch(1)
 
         when:
-        fintEvents.registerUpstreamListener('rfk.no', { e -> latch.countDown() } as EventListener)
+        fintEvents.registerUpstreamListener('rfk.no', { e -> latch.countDown() } as FintEventListener)
         fintEvents.sendUpstream(event)
 
         then:
@@ -56,7 +56,7 @@ class FintEventsSpec extends Specification {
         def expectedEvent = new Event(corrId: event.getCorrId(), orgId: 'rfk.no', source: 'adapter', action: DefaultActions.HEALTH, client: 'adapter')
 
         when:
-        fintEvents.registerDownstreamListener('rfk.no', { e -> fintEvents.sendUpstream(expectedEvent) } as EventListener)
+        fintEvents.registerDownstreamListener('rfk.no', { e -> fintEvents.sendUpstream(expectedEvent) } as FintEventListener)
         def responseEvent = fintEvents.sendHealthCheck(event)
 
         then:

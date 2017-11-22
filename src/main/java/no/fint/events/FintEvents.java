@@ -34,12 +34,12 @@ public class FintEvents {
         log.info("Started event dispatchers");
     }
 
-    public void registerUpstreamListener(String orgId, EventListener eventListener) {
-        upstreamDispatcher.registerListener(orgId, eventListener);
+    public void registerUpstreamListener(String orgId, FintEventListener fintEventListener) {
+        upstreamDispatcher.registerListener(orgId, fintEventListener);
     }
 
-    public void registerDownstreamListener(String orgId, EventListener eventListener) {
-        downstreamDispatcher.registerListener(orgId, eventListener);
+    public void registerDownstreamListener(String orgId, FintEventListener fintEventListener) {
+        downstreamDispatcher.registerListener(orgId, fintEventListener);
     }
 
     public boolean sendUpstream(Event event) {
