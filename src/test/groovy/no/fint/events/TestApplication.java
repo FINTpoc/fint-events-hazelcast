@@ -1,13 +1,12 @@
 package no.fint.events;
 
+import com.hazelcast.core.Hazelcast;
+import com.hazelcast.core.HazelcastInstance;
 import no.fint.events.annotations.EnableFintEvents;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.annotation.Bean;
 
 @EnableFintEvents
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
-
 @SpringBootApplication
 public class TestApplication {
 
